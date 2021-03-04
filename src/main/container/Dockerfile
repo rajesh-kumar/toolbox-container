@@ -12,31 +12,35 @@ ARG group=tool
 ARG uid=1000
 ARG gid=1000
 
-RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-get update && apt-get install --no-install-recommends -y software-properties-common apt-transport-https && rm -rf /var/lib/apt/lists/*
 
 # utils for pod investigation & code build
 # ansible to use for vagrant provisioning or playbook executions
-RUN apt-get install -y apt-transport-https gnupg2 ansible wget yamllint curl sudo jq uidmap iptables \
-	git vim net-tools zip unzip mysql-client python3-pip sshpass telnet iputils-ping bash-completion
+RUN apt-get update && apt-get install --no-install-recommends -y gnupg2 ansible wget yamllint curl jq uidmap iptables \
+	git vim net-tools zip unzip mysql-client python3-pip sshpass telnet iputils-ping bash-completion && \
+	rm -rf /var/lib/apt/lists/*
 
 # utils for container build/push
 RUN . /etc/os-release && \
 	echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
 	curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add - && \
-	apt-get update && apt-get -y upgrade && apt-get -y install buildah podman skopeo
+	apt-get update && apt-get install --no-install-recommends -y buildah podman skopeo && rm -rf /var/lib/apt/lists/*
 
 # kubectl & helm
 RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
 		echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list && \
 		curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
 		echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
-		apt-get update && apt-get install -y kubectl helm && \
+		apt-get update && apt-get install --no-install-recommends -y kubectl helm && \
 		kubectl completion bash > /etc/bash_completion.d/kubectl && \
-		helm completion bash > /etc/bash_completion.d/helm
+		helm completion bash > /etc/bash_completion.d/helm && \
+		rm -rf /var/lib/apt/lists/*
 
 # chrome for headless html scrapping
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-	apt install -y ./google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb
+RUN curl -s https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+	echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee -a /etc/apt/sources.list.d/google.list && \
+	apt-get update && apt-get install --no-install-recommends -y google-chrome-stable && \
+	rm -rf /var/lib/apt/lists/*
 
 COPY maven/files/tools /usr/local/bin/
 RUN chmod 755 /usr/local/bin/tools

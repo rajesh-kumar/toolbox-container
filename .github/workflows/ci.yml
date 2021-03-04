@@ -28,6 +28,8 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKERFILE_HADOLINT_FILE_NAME: .hadolint.yaml
+          FILTER_REGEX_EXCLUDE: .*src/**/VagrantDockerfile*
       - name: Cache .m2 registry
         uses: actions/cache@v2.1.4
         with:

@@ -1,3 +1,5 @@
+<h1 align="center"> ToolBox Container Image</h1>
+
 [![CI](https://github.com/rajesh-kumar/toolbox-container/workflows/CI/badge.svg)](https://github.com/rajesh-kumar/toolbox-container/actions?query=branch%3Amaster)
 [![Release](https://github.com/rajesh-kumar/toolbox-container/workflows/Release/badge.svg)](https://github.com/rajesh-kumar/toolbox-container/actions?query=branch%3Amaster)
 
@@ -56,20 +58,16 @@ kubectl debug -it target-pod --image=raju2210/toolbox --target=target-pod
 kubectl describe pod target-pod | grep Ephemeral
 ```
 
-Make sure EphemeralContainers feature is enabled in your cluster [https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/]
+Make sure [EphemeralContainers feature](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/) is enabled in your cluster.
 
-For more details, refer here [https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/#ephemeral-container]
+For more details, [refer here](https://kubernetes.io/docs/tasks/debug-application-cluster/debug-running-pod/#ephemeral-container)
 
 Note: Do not use this image as base for writing git hub actions or any other application.
 
-# Git Branching model
+## Commit Message Conventions
 
-Github flow for managing features[https://guides.github.com/introduction/flow/]
+Use [conventional commit message format](https://www.conventionalcommits.org/en/v1.0.0/)
 
-# Commit Guidelines
+## Maven versioning
 
-Use conventional commit message format [https://www.conventionalcommits.org/en/v1.0.0/]
-
-# Maven versioning
-
-Ci Friendly [https://maven.apache.org/maven-ci-friendly.html]
+[Ci Friendly](https://maven.apache.org/maven-ci-friendly.html)

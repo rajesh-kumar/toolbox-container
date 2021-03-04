@@ -1,13 +1,11 @@
 #!/bin/bash
 set -u
 shopt -s expand_aliases
-[ -f /home/tool/.bashrc ] && eval "$(cat /home/tool/.bashrc | tail -n 1)"
+[ -f /home/tool/.bashrc ] && eval "$(tail -n 1 /home/tool/.bashrc)"
 
 TOOLS_LOC=${TOOLS_LOC:=/opt/tools}
 KUBE_LOC=${KUBE_LOC:=/home/tool/kube-config}
 WORKSPACE_LOC=${WORKSPACE_LOC:=/home/tool/workplace}
-TOOLNAME=
-TOOLARGS=
 
 if [ -d $WORKSPACE_LOC ]; then
 	WORKDIR=$WORKSPACE_LOC
@@ -27,15 +25,14 @@ function catchException() {
 
 function tools() {
 
-	[ -d $WORKDIR ] && {
-		touch $WORKDIR/.testlog || ko "cannot write into $WORKDIR"
+	[ -d "$WORKDIR" ] && {
+		touch "$WORKDIR/.testlog" || ko "cannot write into $WORKDIR"
 	}
-	cd $WORKDIR
+	cd "$WORKDIR" || exit
 
 	if [ $# -eq 0 ]; then
 		help
 	else
-		TOOLNAME=$1
 		bash -ci "$(printf ' %q' "$@")"
 	fi
 
