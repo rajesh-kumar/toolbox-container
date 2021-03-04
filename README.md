@@ -5,10 +5,11 @@ Ephemeral Container bundled with various tools for local debugging, builds and i
 [![Release](https://github.com/rajesh-kumar/toolbox-container/workflows/Release/badge.svg)](https://github.com/rajesh-kumar/toolbox-container/actions?query=branch%3Amaster)
 
 
-# Getting Started
+## Usage
 
-## Run tools on your current working directory
-### MAC
+### Run tools on your current working directory
+
+#### MAC
 
 ```shell script
 alias toolbox="docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config:rw -v $(pwd):/home/tool/workplace:rw raju2210/toolbox"
@@ -19,7 +20,7 @@ If you don't want to type the command for every new terminal you open, you can a
 toolbox mvn clean package
 ```
 
-### WINDOWS(cmd)
+#### WINDOWS(cmd)
 
 ```bash script
 set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config -v %cd%:/home/tool/workplace raju2210/toolbox"
@@ -27,7 +28,7 @@ set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:
 toolbox nslookup google.com
 ```
 
-### WINDOWS(powershell)
+#### WINDOWS(powershell)
 
 ```powershell script
 notepad $profile
@@ -39,12 +40,12 @@ Set-Alias toolbox toolboxFn
 toolbox nslookup google.com
 ```
 
-## Run and attach to the network namespace of the container to debug
+### Run and attach to the network namespace of the container to debug
 ```shell script
 docker run --name toolbox --net=container:${container_id_to_debug} -itd raju2210/toolbox:latest
 ```
 
-## Run it in kubernetes as Ephemeral Container
+### Run it in kubernetes as Ephemeral Container
 
 At times you need to debug build issues within k8s when your CI jobs fail (using k8s as build platform) or troubleshoot failing applications containers using distroless images  
 
