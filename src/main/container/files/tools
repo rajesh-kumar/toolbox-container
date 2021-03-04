@@ -1,0 +1,47 @@
+#!/bin/bash
+set -u
+shopt -s expand_aliases
+[ -f /home/tool/.bashrc ] && eval "$(cat /home/tool/.bashrc | tail -n 1)"
+
+TOOLS_LOC=${TOOLS_LOC:=/opt/tools}
+KUBE_LOC=${KUBE_LOC:=/home/tool/kube-config}
+WORKSPACE_LOC=${WORKSPACE_LOC:=/home/tool/workplace}
+TOOLNAME=
+TOOLARGS=
+
+if [ -d $WORKSPACE_LOC ]; then
+	WORKDIR=$WORKSPACE_LOC
+elif [ -d /home/tool ]; then
+	WORKDIR=/home/tool
+else
+	WORKDIR=$(pwd)
+fi;
+
+function help() {
+	echo "You need to paas commands to run on workspace i.e. mvn, ping, telnet etc."
+}
+
+function catchException() {
+  echo "exiting.."
+}
+
+function tools() {
+
+	[ -d $WORKDIR ] && {
+		touch $WORKDIR/.testlog || ko "cannot write into $WORKDIR"
+	}
+	cd $WORKDIR
+
+	if [ $# -eq 0 ]; then
+		help
+	else
+		TOOLNAME=$1
+		bash -ci "$(printf ' %q' "$@")"
+	fi
+
+}
+
+##
+trap 'catchException' ERR INT TERM
+#trap '_finish' EXIT
+tools "$@"

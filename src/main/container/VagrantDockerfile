@@ -1,0 +1,56 @@
+# dockerfile_lint - ignore
+# Do not use this container for production use
+# Vagrant file is different because sshd service can be run as root user only
+# and to ssh in docker vagrant requires ssh
+FROM ubuntu:20.10
+
+LABEL k8s.description="vagrant dev workstation" \
+	name="vagrant-dev-workstation"
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN apt-get update && apt-get install -y software-properties-common
+
+# utils for pod investigation & code build
+# ansible to use for vagrant provisioning or playbook executions
+RUN apt-get install -y apt-transport-https gnupg2 ansible wget yamllint curl sudo openssh-server jq uidmap iptables \
+	git vim net-tools zip unzip mysql-client python3-pip sshpass telnet iputils-ping bash-completion && \
+	mkdir /var/run/sshd && mkdir /root/.ssh && \
+	curl https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub >> /root/.ssh/authorized_keys && \
+	chmod 600 /root/.ssh/authorized_keys
+
+# utils for container build/push
+RUN . /etc/os-release && \
+	echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
+	curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add - && \
+	apt-get update && apt-get -y upgrade && apt-get -y install buildah podman skopeo
+
+# kubectl & helm
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+		echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list && \
+		curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
+		echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+		apt-get update && apt-get install -y kubectl helm && \
+		kubectl completion bash > /etc/bash_completion.d/kubectl && \
+		helm completion bash > /etc/bash_completion.d/helm
+
+# chrome for headless html scrapping
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+	apt install -y ./google-chrome-stable_current_amd64.deb && rm google-chrome-stable_current_amd64.deb
+
+# sdkman to manage development tools
+RUN curl -s "https://get.sdkman.io" | bash && touch /root/.bashrc && \
+	echo 'source /usr/share/bash-completion/bash_completion' >> /root/.bashrc && \
+	echo 'alias k=kubectl' >> /root/.bashrc && \
+	echo 'complete -F __start_kubectl k' >> /root/.bashrc && \
+	echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /root/.bashrc && \
+	sed -i -e 's/sdkman_auto_answer=false/sdkman_auto_answer=true/g' /root/.sdkman/etc/config && \
+	source "/root/.sdkman/bin/sdkman-init.sh" && sdk install java 8.0.265-open && sdk install maven
+
+ENV KUBECONFIG=/root/kube-config/config
+COPY maven/files/kubectl_aliases.txt /root/.kubectl_aliases
+COPY maven/files/tools /usr/local/bin/
+RUN chmod 755 /usr/local/bin/tools
+
+# ssh as service for vagrant users
+CMD ["/usr/sbin/sshd", "-D"]
