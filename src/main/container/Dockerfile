@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y gnupg2 ansible 
 # utils for container build/push
 RUN . /etc/os-release && \
 	echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
-	curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add - && \
+	curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add - && \
 	apt-get update && apt-get install --no-install-recommends -y buildah podman skopeo && rm -rf /var/lib/apt/lists/*
 
 # kubectl & helm
