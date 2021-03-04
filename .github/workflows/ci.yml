@@ -47,15 +47,13 @@ jobs:
           mvn -B package --file pom.xml -Drevision=${SNAP_VERSION} \
             -Djkube.docker.username=${{ secrets.DOCKER_HUB_USERNAME }} \
             -Djkube.docker.password=${{ secrets.DOCKER_HUB_PASSWORD }} \
-            -Djkube.docker.verbose=true \
-            -Djkube.docker.registry=docker.io
+            -Djkube.docker.verbose=true
       - name: Publish to GitHub Packages Apache Maven
         run: |
           SNAP_VERSION="$(cat version.txt | awk -F. -v OFS=. '{$NF++;print}')-SNAPSHOT"
           mvn deploy --file pom.xml -s $GITHUB_WORKSPACE/settings.xml -Drevision=${SNAP_VERSION} \
             -Djkube.docker.username=${{ secrets.DOCKER_HUB_USERNAME }} \
             -Djkube.docker.password=${{ secrets.DOCKER_HUB_PASSWORD }} \
-            -Djkube.docker.verbose=true \
-            -Djkube.docker.registry=docker.io
+            -Djkube.docker.verbose=true
         env:
           GITHUB_TOKEN: ${{ github.token }}

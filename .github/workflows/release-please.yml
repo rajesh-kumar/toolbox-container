@@ -58,7 +58,6 @@ jobs:
           mvn deploy --file pom.xml -s $GITHUB_WORKSPACE/settings.xml -Drevision=${REL_VERSION} \
             -Djkube.docker.username=${{ secrets.DOCKER_HUB_USERNAME }} \
             -Djkube.docker.password=${{ secrets.DOCKER_HUB_PASSWORD }} \
-            -Djkube.docker.verbose=true \
-            -Djkube.docker.registry=docker.io
+            -Djkube.docker.verbose=true
         env:
           GITHUB_TOKEN: ${{ github.token }}
