@@ -12,18 +12,22 @@ Ephemeral Container bundled with various tools for local debugging, builds and i
 #### MAC
 
 ```shell script
-alias toolbox="docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config:rw -v $(pwd):/home/tool/workplace:rw raju2210/toolbox"
+alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/kube-config:rw -v $HOME/.m2:/home/tool/.m2:rw -v $(pwd):/home/tool/workplace:rw raju2210/toolbox"
 ```
-If you don't want to type the command for every new terminal you open, you can add the command to your `.bashrc` on mac or `.zshrc`.
 
 ```shell script
 toolbox mvn clean package
+```
+If you don't want to type the command every time on terminal, put the following script in ~/.bashrc or ~/.zshrc
+
+```shell script
+function cd() { builtin cd "$@" && alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/kube-config:rw -v $(pwd):/home/tool/workplace:rw -v $HOME/.m2:/home/tool/.m2:rw raju2210/toolbox" }
 ```
 
 #### WINDOWS(cmd)
 
 ```bash script
-set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config -v %cd%:/home/tool/workplace raju2210/toolbox"
+set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config -v %cd%:/home/tool/workplace -v <path_to_m2_dir>:/home/tool/.m2 raju2210/toolbox"
 
 toolbox nslookup google.com
 ```
@@ -39,6 +43,7 @@ Set-Alias toolbox toolboxFn
 
 toolbox nslookup google.com
 ```
+TBD: add example for windows to override cd.
 
 ### Run and attach to the network namespace of the container to debug
 ```shell script
