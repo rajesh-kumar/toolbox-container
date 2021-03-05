@@ -43,7 +43,7 @@ Set-Alias toolbox toolboxFn
 
 toolbox nslookup google.com
 ```
-TBD: add example for windows to override cd.
+TBD: add examples for windows to override cd and default home directory.
 
 ### Run and attach to the network namespace of the container to debug
 ```shell script
