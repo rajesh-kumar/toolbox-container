@@ -18,6 +18,15 @@ alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/kube-c
 ```shell script
 toolbox mvn clean package
 ```
+
+| Directory Mounted | Description |
+| --- | --- |
+| `-v $HOME/.kube:/home/tool/kube-config:rw` | Kube Config directory. Container sets /home/tool/kube-config directory to be used by kubectl |
+| `$HOME/.m2:/home/tool/.m2:rw` | Mount maven local repository to increase reusability |
+| `-v $(pwd):/home/tool/workplace:rw` | All commands executed on your current work directory mounted at /home/tool/workplace |
+
+Do not change container mounted paths (on right side of volume mounts), only change source paths.
+
 If you don't want to type the command every time on terminal, put the following script in ~/.bashrc or ~/.zshrc
 
 ```shell script
