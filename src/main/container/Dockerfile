@@ -31,7 +31,8 @@ RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
 		echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list && \
 		curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
 		echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
-		apt-get update && apt-get install --no-install-recommends -y kubectl helm && \
+		apt-get update && apt-get install --no-install-recommends -y kubectl helm python3-yaml yamllint && \
+		pip3 install openshift ansible-lint kubernetes-validate && \
 		kubectl completion bash > /etc/bash_completion.d/kubectl && \
 		helm completion bash > /etc/bash_completion.d/helm && \
 		rm -rf /var/lib/apt/lists/*
@@ -49,7 +50,18 @@ RUN groupadd -g ${gid} ${group} && useradd -m -d /home/${user} -u ${uid} -g ${gr
 
 USER ${user}
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV KUBECONFIG=/home/${user}/kube-config/config
+ENV NO_PROXY=127.0.0.1,kubernetes.docker.internal,localhost,*.xip.io
+ENV KUBECONFIG=/home/${user}/.kube-config/config
+ENV K8S_AUTH_KUBECONFIG=/home/${user}/.kube-config/config
+ENV HELM_HOME=/home/${user}/.helm-config
+ENV HELM_CACHE_HOME=/home/${user}/.helm-config/cache
+ENV HELM_CONFIG_HOME=/home/${user}/.helm-config/config
+ENV HELM_DATA_HOME=/home/${user}/.helm-config/data
+ENV HELM_PLUGINS=/home/${user}/.helm-config/plugins
+ENV HELM_REGISTRY_CONFIG=/home/${user}/.helm-config/registry.json
+ENV HELM_REPOSITORY_CACHE=/home/${user}/.helm-config/repository
+ENV HELM_REPOSITORY_CONFIG=/home/${user}/.helm-config/repositories.yaml
+
 WORKDIR /home/${user}
 COPY maven/files/kubectl_aliases.txt /home/${user}/.kubectl_aliases
 
@@ -61,7 +73,8 @@ RUN curl -s "https://get.sdkman.io" | bash && touch /home/${user}/.bashrc && \
 		echo 'complete -F __start_kubectl k' >> /home/${user}/.bashrc && \
 		echo '[ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases' >> /home/${user}/.bashrc && \
 		sed -i -e 's/sdkman_auto_answer=false/sdkman_auto_answer=true/g' /home/tool/.sdkman/etc/config && \
-		source "/home/${user}/.sdkman/bin/sdkman-init.sh" && sdk install java 8.0.265-open && sdk install maven
+		source "/home/${user}/.sdkman/bin/sdkman-init.sh" && sdk install java 8.0.265-open && \
+		sdk install maven && ansible-galaxy collection install community.kubernetes
 
 # ssh as service for vagrant users
 ENTRYPOINT ["/usr/local/bin/tools"]

@@ -4,7 +4,7 @@ shopt -s expand_aliases
 [ -f /home/tool/.bashrc ] && eval "$(tail -n 1 /home/tool/.bashrc)"
 
 TOOLS_LOC=${TOOLS_LOC:=/opt/tools}
-KUBE_LOC=${KUBE_LOC:=/home/tool/kube-config}
+KUBE_LOC=${KUBE_LOC:=/home/tool/.kube-config}
 WORKSPACE_LOC=${WORKSPACE_LOC:=/home/tool/workplace}
 
 if [ -d $WORKSPACE_LOC ]; then

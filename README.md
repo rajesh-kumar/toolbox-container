@@ -12,7 +12,7 @@ Ephemeral Container bundled with various tools for local debugging, builds and i
 #### MAC
 
 ```shell script
-alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/kube-config:rw -v $HOME/.m2:/home/tool/.m2:rw -v $(pwd):/home/tool/workplace:rw raju2210/toolbox"
+alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/.kube-config:rw -v $HOME/.helm-config:/home/tool/.helm-config:rw -v $HOME/.m2:/home/tool/.m2:rw -v $(pwd):/home/tool/workplace:rw raju2210/toolbox"
 ```
 
 ```shell script
@@ -21,20 +21,21 @@ toolbox mvn clean package
 
 | Directory Mounted | Description |
 | --- | --- |
-| `-v $HOME/.kube:/home/tool/kube-config:rw` | Container configures kubectl to use config from /home/tool/kube-config directory |
-| `$HOME/.m2:/home/tool/.m2:rw` | Mount host m2 repository to increase reusability |
+| `-v $HOME/.kube:/home/tool/.kube-config:rw` | Container configures kubectl to use config from /home/tool/.kube-config directory |
+| `-v $HOME/.helm-config:/home/tool/.helm-config:rw` | Container configures helm to use /home/tool/.helm-config directory for cache and repository |
+| `$HOME/.m2:/home/tool/.m2:rw` | Mount host m2 repository to increase reusability of downloaded dependencies |
 | `-v $(pwd):/home/tool/workplace:rw` | Container always executes commands in /home/tool/workplace so you mount your current working directory on same. |
 
 If you don't want to type the command every time on terminal, put the following script in ~/.bashrc or ~/.zshrc
 
 ```shell script
-function cd() { builtin cd "$@" && alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/kube-config:rw -v $(pwd):/home/tool/workplace:rw -v $HOME/.m2:/home/tool/.m2:rw raju2210/toolbox" }
+function cd() { builtin cd "$@" && alias toolbox="docker run --rm --net='host' -it -v $HOME/.kube:/home/tool/.kube-config:rw -v $HOME/.helm-config:/home/tool/.helm-config:rw -v $(pwd):/home/tool/workplace:rw -v $HOME/.m2:/home/tool/.m2:rw raju2210/toolbox" }
 ```
 
 #### WINDOWS(cmd)
 
 ```bash script
-set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config -v %cd%:/home/tool/workplace -v <path_to_m2_dir>:/home/tool/.m2 raju2210/toolbox"
+set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>\.kube:/home/tool/.kube-config -v <path_to_helm_dir>:/home/tool/.helm-config -v %cd%:/home/tool/workplace -v <path_to_m2_dir>:/home/tool/.m2 raju2210/toolbox"
 
 toolbox nslookup google.com
 ```
@@ -44,7 +45,7 @@ toolbox nslookup google.com
 ```powershell script
 notepad $profile
 function toolboxFn {
-    docker run --rm --net='host' -it -v <path_to_k8s_config_dir>/.kube:/home/tool/kube-config -v ${PWD}:/home/tool/workplace raju2210/toolbox
+    docker run --rm --net='host' -it -v <path_to_k8s_config_dir>\.kube:/home/tool/.kube-config -v <path_to_helm_dir>:/home/tool/.helm-config -v ${PWD}:/home/tool/workplace raju2210/toolbox
 }
 Set-Alias toolbox toolboxFn
 
