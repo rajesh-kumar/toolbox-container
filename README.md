@@ -35,7 +35,7 @@ function cd() { builtin cd "$@" && alias toolbox="docker run --rm --net='host' -
 #### WINDOWS(cmd)
 
 ```bash script
-set "toolbox=docker run --rm --net='host' -it -v <path_to_k8s_config_dir>\.kube:/home/tool/.kube-config -v <path_to_helm_dir>:/home/tool/.helm-config -v %cd%:/home/tool/workplace -v <path_to_m2_dir>:/home/tool/.m2 raju2210/toolbox"
+set "toolbox=docker run --rm --net='host' -it -v %systemdrive%%homepath%\.kube:/home/tool/.kube-config -v %systemdrive%%homepath%\.helm-config:/home/tool/.helm-config -v %cd%:/home/tool/workplace -v %systemdrive%%homepath%\.m2:/home/tool/.m2 raju2210/toolbox"
 
 toolbox nslookup google.com
 ```

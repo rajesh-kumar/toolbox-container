@@ -32,7 +32,7 @@ RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add 
 		curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
 		echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
 		apt-get update && apt-get install --no-install-recommends -y kubectl helm python3-yaml yamllint && \
-		pip3 install --no-cache-dir openshift ansible-lint kubernetes-validate && \
+		pip3 install --no-cache-dir openshift ansible-lint kubernetes-validate jmespath && \
 		kubectl completion bash > /etc/bash_completion.d/kubectl && \
 		helm completion bash > /etc/bash_completion.d/helm && \
 		rm -rf /var/lib/apt/lists/*
